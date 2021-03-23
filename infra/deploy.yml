@@ -30,6 +30,11 @@ Parameters:
     Default: ""
     Description: A Load balancer
 
+  HttpListener:
+    Type: String
+    Default: ""
+    Description: A Listener Load balancer
+
   NginxImageUrl:
     Type: String
     Default: ""
@@ -68,7 +73,7 @@ Parameters:
 
   Priority:
     Type: Number
-    Default: 2
+    Default: 3
     Description: The priority for the routing rule added to the load balancer.
       This only applies if your have multiple services which have been
       assigned to different paths on the load balancer.
@@ -102,8 +107,8 @@ Resources:
     Properties:
       Family: !Ref "ServiceName"
       NetworkMode: bridge
-      Cpu: 600
-      Memory: 768
+      Cpu: 512
+      Memory: 512
       TaskRoleArn:
         Fn::If:
           - "HasCustomRole"
@@ -111,7 +116,7 @@ Resources:
           - !Ref "AWS::NoValue"
       ContainerDefinitions:
         - Name: !Sub ${ServiceName}-nginx
-          Cpu: 100
+          Cpu: 128
           Memory: 128
           Essential: true
           Image: !Ref "NginxImageUrl"
@@ -128,7 +133,7 @@ Resources:
               awslogs-region: !Ref "AWS::Region"
               awslogs-stream-prefix: !Sub ${EnvironmentName}-${ServiceName}-nginx
         - Name: !Ref "ServiceName"
-          Cpu: 100
+          Cpu: 128
           Memory: 128
           Image: !Ref "ServiceImageUrl"
           PortMappings:
@@ -146,7 +151,7 @@ Resources:
               awslogs-region: !Ref "AWS::Region"
               awslogs-stream-prefix: !Sub ${EnvironmentName}-${ServiceName}
         - Name: xray-daemon
-          Cpu: 100
+          Cpu: 128
           Memory: 128
           Essential: false
           Image: !Ref "XRayImageUrl"
@@ -166,7 +171,7 @@ Resources:
   # as monitor the number of running tasks and replace any that have crashed
   Service:
     Type: AWS::ECS::Service
-    DependsOn: LoadBalancerRule
+    DependsOn: ListenerRule
     Properties:
       ServiceName: !Ref ServiceName
       Cluster: !Ref Cluster
@@ -188,29 +193,29 @@ Resources:
   TargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
+      Name: !Sub ${ServiceName}-nginx
+      Port: !Ref NginxContainerPort
+      Protocol: HTTP
+      VpcId: !Ref "VPC"
       HealthCheckIntervalSeconds: 10
       HealthCheckPath: /ms-stocks/health/live
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
-      Name: !Sub ${ServiceName}-nginx
-      Port: !Ref NginxContainerPort
-      Protocol: HTTP
       UnhealthyThresholdCount: 2
-      VpcId: !Ref "VPC"
 
-  HttpListener:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties:
-      LoadBalancerArn: !Ref ALB
-      Port: 80
-      Protocol: HTTP
-      DefaultActions:
-        - Type: forward
-          TargetGroupArn: !Ref TargetGroup
+  # HttpListener:
+  #   Type: AWS::ElasticLoadBalancingV2::Listener
+  #   Properties:
+  #     LoadBalancerArn: !Ref ALB
+  #     Port: 80
+  #     Protocol: HTTP
+  #     DefaultActions:
+  #       - Type: forward
+  #         TargetGroupArn: !Ref TargetGroup
 
   # Create a rule on the load balancer for routing traffic to the target group
-  LoadBalancerRule:
+  ListenerRule:
     Type: AWS::ElasticLoadBalancingV2::ListenerRule
     Properties:
       Actions:

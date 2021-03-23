@@ -32,7 +32,7 @@ Parameters:
 
   Priority:
     Type: Number
-    Default: 2
+    Default: 3
     Description: The priority for the routing rule added to the load balancer.
       This only applies if your have multiple services which have been
       assigned to different paths on the load balancer.
@@ -127,17 +127,17 @@ Resources:
                 - Name: SourceArtifact
         - Name: Build
           Actions:
-            - Name: ValidateTemplate
-              RunOrder: 1
-              InputArtifacts:
-                - Name: SourceArtifact
-              ActionTypeId:
-                Category: Test
-                Owner: AWS
-                Version: 1
-                Provider: CodeBuild
-              Configuration:
-                ProjectName: !Ref CodeBuildIntegrationProject
+            # - Name: ValidateTemplate
+            #   RunOrder: 1
+            #   InputArtifacts:
+            #     - Name: SourceArtifact
+            #   ActionTypeId:
+            #     Category: Test
+            #     Owner: AWS
+            #     Version: 1
+            #     Provider: CodeBuild
+            #   Configuration:
+            #     ProjectName: !Ref CodeBuildIntegrationProject
             - Name: GetECRImages
               RunOrder: 2
               InputArtifacts:
@@ -210,6 +210,7 @@ Resources:
   PipelineWebhook:
     Type: AWS::CodePipeline::Webhook
     Properties:
+      Name: !Sub ${GitHubRepositoryName}-pipeline-webhook
       Authentication: GITHUB_HMAC
       AuthenticationConfiguration:
         SecretToken: !Sub ${GitHubPersonalAccessToken}
@@ -224,7 +225,7 @@ Resources:
   CodeBuildGenerateImagesProject:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: CodeBuildGenerateImagesProject
+      Name: !Sub ${GitHubRepositoryName}-generateimages
       ServiceRole: !Sub ${CodeBuildRole.Arn}
       TimeoutInMinutes: 15
       Artifacts:
@@ -236,8 +237,10 @@ Resources:
         ComputeType: BUILD_GENERAL1_SMALL
         PrivilegedMode: true
         EnvironmentVariables:
-          - Name: "ACCOUNT_ID"
+          - Name: ACCOUNT_ID
             Value: !Sub ${AccoundId}
+          - Name: ASPNETCORE_ENVIRONMENT
+            Value: Production
       LogsConfig:
         CloudWatchLogs:
           Status: ENABLED
@@ -282,6 +285,7 @@ Resources:
   CodeBuildPRProject:
     Type: AWS::CodeBuild::Project
     Properties:
+      Name: !Sub ${GitHubRepositoryName}-pull-requests
       Artifacts:
         Type: NO_ARTIFACTS
       Cache:
@@ -296,7 +300,6 @@ Resources:
       LogsConfig:
         CloudWatchLogs:
           Status: ENABLED
-      Name: !Sub ${GitHubRepositoryName}-pull-requests
       ServiceRole: !Sub ${CodeBuildRole.Arn}
       Source:
         GitCloneDepth: 1
@@ -319,13 +322,13 @@ Resources:
   # NOTE: Only one of these tokens can be created per "ServerType" per region. If you plan on setting
   # up multiple pipelines within the same account and region, you may need to pull this particlar resource
   # into a different template
-  CodeBuildCredentials:
-    Condition: CreateCodeBuildCredentials
-    Type: AWS::CodeBuild::SourceCredential
-    Properties:
-      Token: !Sub ${GitHubPersonalAccessToken}
-      ServerType: GITHUB
-      AuthType: PERSONAL_ACCESS_TOKEN
+  # CodeBuildCredentials:
+  #   Condition: CreateCodeBuildCredentials
+  #   Type: AWS::CodeBuild::SourceCredential
+  #   Properties:
+  #     Token: !Sub ${GitHubPersonalAccessToken}
+  #     ServerType: GITHUB
+  #     AuthType: PERSONAL_ACCESS_TOKEN
 
   # IAM Role assumed by CodePipeline during pipeline executions. Gives permission to manage artifacts,
   # Call CodeBuild project and monitor status, and create and update CloudFormation stacks as part
