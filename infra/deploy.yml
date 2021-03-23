@@ -33,7 +33,7 @@ Parameters:
   HttpListener:
     Type: String
     Default: ""
-    Description: A Listener Load balancer
+    Description: A Listener of the Load balancer
 
   NginxImageUrl:
     Type: String
@@ -203,16 +203,6 @@ Resources:
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
       UnhealthyThresholdCount: 2
-
-  # HttpListener:
-  #   Type: AWS::ElasticLoadBalancingV2::Listener
-  #   Properties:
-  #     LoadBalancerArn: !Ref ALB
-  #     Port: 80
-  #     Protocol: HTTP
-  #     DefaultActions:
-  #       - Type: forward
-  #         TargetGroupArn: !Ref TargetGroup
 
   # Create a rule on the load balancer for routing traffic to the target group
   ListenerRule:

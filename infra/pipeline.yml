@@ -25,6 +25,11 @@ Parameters:
     Default: ""
     Description: A Load balancer
 
+  HttpListener:
+    Type: String
+    Default: ""
+    Description: A Listener of the Load balancer
+
   ECSServiceAutoScalingRoleARN:
     Type: String
     Default: ""
@@ -87,7 +92,7 @@ Parameters:
     AllowedValues:
       - "true"
       - "false"
-    Default: "true"
+    Default: "false"
     Description: >
       Determines whether or not your personal access token is passed to CodeBuild. Set this value to
       "true" if this is the first time using CodeBuild with GitHub, as CodeBuild only supports one
@@ -175,7 +180,8 @@ Resources:
                     "EnvironmentName" : "${EnvironmentName}",
                     "VPC":  "${VPC}",
                     "Cluster": "${Cluster}",
-                    "ALB": "${ALB}",                    
+                    "ALB": "${ALB}",
+                    "HttpListener": "${HttpListener}",
                     "ServiceImageUrl": { "Fn::GetParam" : ["BuildArtifact", "serviceimages.json", "ServiceImageUrl"] },
                     "NginxImageUrl": { "Fn::GetParam" : ["BuildArtifact", "serviceimages.json", "NginxImageUrl"] },
                     "XRayImageUrl": { "Fn::GetParam" : ["BuildArtifact", "serviceimages.json", "XRayImageUrl"] },
@@ -322,13 +328,13 @@ Resources:
   # NOTE: Only one of these tokens can be created per "ServerType" per region. If you plan on setting
   # up multiple pipelines within the same account and region, you may need to pull this particlar resource
   # into a different template
-  # CodeBuildCredentials:
-  #   Condition: CreateCodeBuildCredentials
-  #   Type: AWS::CodeBuild::SourceCredential
-  #   Properties:
-  #     Token: !Sub ${GitHubPersonalAccessToken}
-  #     ServerType: GITHUB
-  #     AuthType: PERSONAL_ACCESS_TOKEN
+  CodeBuildCredentials:
+    Condition: CreateCodeBuildCredentials
+    Type: AWS::CodeBuild::SourceCredential
+    Properties:
+      Token: !Sub ${GitHubPersonalAccessToken}
+      ServerType: GITHUB
+      AuthType: PERSONAL_ACCESS_TOKEN
 
   # IAM Role assumed by CodePipeline during pipeline executions. Gives permission to manage artifacts,
   # Call CodeBuild project and monitor status, and create and update CloudFormation stacks as part
