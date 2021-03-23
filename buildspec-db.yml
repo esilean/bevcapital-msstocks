@@ -1,0 +1,21 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      dotnet: latest
+    commands:
+      - echo Installing Entity Framework Core tools reference - .NET CLI
+      - dotnet tool install --global dotnet-ef
+
+  pre_build:
+    commands:
+      - echo Info about dbcontext
+      - echo ASPNETCORE_ENVIRONMENT is $ASPNETCORE_ENVIRONMENT
+      - echo ConnectionStrings__SqlCNN $ConnectionStrings__SqlCNN
+      - dotnet ef dbcontext info -p ./src/BevCapital.Stocks.Data -s ./src/BevCapital.Stocks.API
+
+  build:
+    commands:
+      - echo Update database on `date`
+      - dotnet ef database update -p ./src/BevCapital.Stocks.Data -s ./src/BevCapital.Stocks.API --context StocksContext
