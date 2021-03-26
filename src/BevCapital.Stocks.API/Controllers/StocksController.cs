@@ -33,5 +33,17 @@ namespace BevCapital.Stocks.API.Controllers
             return await _mediator.Send(command);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="symbol"></param>
+        /// <returns></returns>
+        [HttpDelete("delete/{symbol}")]
+        public async Task<ActionResult<Unit>> Delete(string symbol)
+        {
+            await _mediator.Send(new Delete.Command { Symbol = symbol });
+            return NoContent();
+        }
+
     }
 }
