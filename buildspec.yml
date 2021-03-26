@@ -25,13 +25,8 @@ phases:
       - REPO_STOCKS_NGINX_NAME=bevcapital-msstocks-nginx
       - REPO_STOCKS_XRAY_NAME=bevcapital-msstocks-xray
 
-      # - echo Creating ECR repositories
-      # - aws ecr describe-repositories --repository-names ${REPO_STOCKS_NAME} || aws ecr create-repository --repository-name ${REPO_STOCKS_NAME} --image-tag-mutability IMMUTABLE
-      # - aws ecr describe-repositories --repository-names ${REPO_STOCKS_NGINX_NAME} || aws ecr create-repository --repository-name ${REPO_STOCKS_NGINX_NAME} --image-tag-mutability IMMUTABLE
-      # - aws ecr describe-repositories --repository-names ${REPO_STOCKS_XRAY_NAME} || aws ecr create-repository --repository-name ${REPO_STOCKS_XRAY_NAME} --image-tag-mutability IMMUTABLE
-
       - echo Building the production Docker image...
-      # Stocks Microservice Image
+      # Microservice Image
       - docker build -t ${REPO_STOCKS_NAME} -f ./Dockerfile ./src
       - docker tag ${REPO_STOCKS_NAME} ${ECR_REPO}/${REPO_STOCKS_NAME}:$IMAGE_TAG
       - docker tag ${REPO_STOCKS_NAME} ${ECR_REPO}/${REPO_STOCKS_NAME}:latest

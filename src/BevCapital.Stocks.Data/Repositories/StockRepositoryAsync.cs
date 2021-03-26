@@ -33,11 +33,6 @@ namespace BevCapital.Stocks.Data.Repositories
             await _stocksContext.Stocks.AddAsync(stock);
         }
 
-        public void Update(Stock stock)
-        {
-            _stocksContext.Stocks.Update(stock);
-        }
-
         public void Remove(Stock stock)
         {
             _stocksContext.Stocks.Remove(stock);

@@ -32,7 +32,16 @@ namespace BevCapital.Stocks.Domain.Entities
 
         public static Stock Create(string symbol, string name, string exchange, string website)
         {
-            return new Stock(symbol, name, exchange, website, DateTime.Now, DateTime.Now);
+            return new Stock(symbol, name, exchange, website, DateTime.Now.ToUniversalTime(), DateTime.Now.ToUniversalTime());
+        }
+
+        public void InitPrice()
+        {
+            StockPrice = StockPrice.Create(Symbol,
+                                           0, 0, 0, 0,
+                                           0, DateTime.Now.ToUniversalTime(),
+                                           0, DateTime.Now.ToUniversalTime(),
+                                           0, 0);
         }
 
         public void SetPrice(decimal open, decimal close, decimal high, decimal low,

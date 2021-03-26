@@ -8,6 +8,8 @@ serviceDependencies.*
 TestResults/
 gitcommit
 *.csv
+help
+github_personal_token
 
 
 # misc
@@ -62,5 +64,3 @@ bld/
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
-
-help

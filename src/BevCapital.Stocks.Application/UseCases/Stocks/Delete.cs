@@ -1,7 +1,5 @@
-﻿using BevCapital.Stocks.Application.DataProviders;
-using BevCapital.Stocks.Application.Errors;
+﻿using BevCapital.Stocks.Application.Errors;
 using BevCapital.Stocks.Domain.Constants;
-using BevCapital.Stocks.Domain.Entities;
 using BevCapital.Stocks.Domain.Notifications;
 using BevCapital.Stocks.Domain.Repositories;
 using FluentValidation;
@@ -13,14 +11,11 @@ using System.Threading.Tasks;
 
 namespace BevCapital.Stocks.Application.UseCases.Stocks
 {
-    public class Create
+    public class Delete
     {
         public class Command : IRequest
         {
             public string Symbol { get; set; }
-            public string Name { get; set; }
-            public string Exchange { get; set; }
-            public string Website { get; set; }
         }
 
         public class CommandValidator : AbstractValidator<Command>
@@ -28,9 +23,6 @@ namespace BevCapital.Stocks.Application.UseCases.Stocks
             public CommandValidator()
             {
                 RuleFor(x => x.Symbol).NotEmpty();
-                RuleFor(x => x.Name).NotEmpty();
-                RuleFor(x => x.Exchange).NotEmpty();
-                RuleFor(x => x.Website).NotEmpty();
             }
         }
 
@@ -38,38 +30,27 @@ namespace BevCapital.Stocks.Application.UseCases.Stocks
         {
             private readonly IUnitOfWork _unitOfWork;
             private readonly IAppNotificationHandler _appNotificationHandler;
-            private readonly IDateProvider _dateProvider;
             private readonly IDistributedCache _distributedCache;
 
             public Handler(IUnitOfWork unitOfWork,
                            IAppNotificationHandler appNotificationHandler,
-                           IDateProvider dateProvider,
                            IDistributedCache distributedCache)
             {
                 _unitOfWork = unitOfWork;
                 _appNotificationHandler = appNotificationHandler;
-                _dateProvider = dateProvider;
                 _distributedCache = distributedCache;
             }
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
-                if (await _unitOfWork.Stocks.FindAsync(request.Symbol) != null)
+                var stock = await _unitOfWork.Stocks.FindAsync(request.Symbol);
+                if (stock == null)
                 {
-                    _appNotificationHandler.AddNotification(Keys.APPSTOCK, Messages.STOCK_EXISTS);
+                    _appNotificationHandler.AddNotification(Keys.APPSTOCK, Messages.STOCK_NOT_FOUND);
                     return Unit.Value;
                 }
 
-                var stock = Stock.Create(request.Symbol, request.Name, request.Exchange, request.Website);
-                if (stock.Invalid)
-                {
-                    _appNotificationHandler.AddNotifications(stock.ValidationResult);
-                    return Unit.Value;
-                }
-
-                stock.InitPrice();
-
-                await _unitOfWork.Stocks.AddAsync(stock);
+                _unitOfWork.Stocks.Remove(stock);
                 var success = await _unitOfWork.SaveAsync();
                 if (success)
                 {

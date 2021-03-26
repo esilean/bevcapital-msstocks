@@ -31,12 +31,6 @@ namespace BevCapital.Stocks.Domain.Repositories
         /// 
         /// </summary>
         /// <param name="stock"></param>
-        void Update(Stock stock);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="stock"></param>
         void Remove(Stock stock);
     }
 }
