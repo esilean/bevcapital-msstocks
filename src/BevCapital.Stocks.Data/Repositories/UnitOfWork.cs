@@ -12,9 +12,13 @@ namespace BevCapital.Stocks.Data.Repositories
         {
             _stocksContext = stocksContext;
             Stocks = new StockRepositoryAsync(_stocksContext);
+            AppUsers = new AppUserRepositoryAsync(_stocksContext);
+            AppUserStocks = new AppUserStockRepositoryAsync(_stocksContext);
         }
 
         public IStockRepositoryAsync Stocks { get; private set; }
+        public IAppUserRepositoryAsync AppUsers { get; private set; }
+        public IAppUserStockRepositoryAsync AppUserStocks { get; private set; }
 
         public async ValueTask DisposeAsync()
         {

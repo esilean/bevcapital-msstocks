@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace BevCapital.Stocks.Application.UseCases.Stocks
 {
-    public class List
+    public class ListStock
     {
         public class Query : IRequest<List<StockOut>> { }
 

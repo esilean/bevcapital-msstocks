@@ -8,8 +8,12 @@ namespace BevCapital.Stocks.Data.Context.Configs
     {
         public void Configure(EntityTypeBuilder<Stock> builder)
         {
+            builder.ToTable("Stocks_Stocks");
             builder.HasKey(r => r.Symbol);
 
+            builder.Property(e => e.Symbol)
+                .HasMaxLength(20)
+                .IsRequired();
             builder.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(100);

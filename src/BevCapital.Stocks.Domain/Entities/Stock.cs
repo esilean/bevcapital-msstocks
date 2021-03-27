@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using System;
+using System.Collections.Generic;
 
 namespace BevCapital.Stocks.Domain.Entities
 {
@@ -12,6 +13,7 @@ namespace BevCapital.Stocks.Domain.Entities
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public StockPrice StockPrice { get; private set; }
+        public ICollection<AppUserStock> AppUserStocks { get; set; }
 
         /// <summary>
         /// EF Constructor

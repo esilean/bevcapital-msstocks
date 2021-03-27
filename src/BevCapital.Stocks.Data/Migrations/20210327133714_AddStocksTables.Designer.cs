@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BevCapital.Stocks.Data.Migrations
 {
     [DbContext(typeof(StocksContext))]
-    [Migration("20210323194220_AddStocksPriceTable")]
-    partial class AddStocksPriceTable
+    [Migration("20210327133714_AddStocksTables")]
+    partial class AddStocksTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,10 +19,59 @@ namespace BevCapital.Stocks.Data.Migrations
                 .HasAnnotation("ProductVersion", "3.1.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("BevCapital.Stocks.Domain.Entities.AppUser", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("varchar(100) CHARACTER SET utf8mb4")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("varchar(100) CHARACTER SET utf8mb4")
+                        .HasMaxLength(100);
+
+                    b.Property<DateTime?>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp(6)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Stocks_AppUsers");
+                });
+
+            modelBuilder.Entity("BevCapital.Stocks.Domain.Entities.AppUserStock", b =>
+                {
+                    b.Property<Guid>("AppUserId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Symbol")
+                        .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
+                        .HasMaxLength(20);
+
+                    b.HasKey("AppUserId", "Symbol");
+
+                    b.HasIndex("Symbol");
+
+                    b.ToTable("Stocks_AppUserStocks");
+                });
+
             modelBuilder.Entity("BevCapital.Stocks.Domain.Entities.Stock", b =>
                 {
                     b.Property<string>("Symbol")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
+                        .HasMaxLength(20);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -52,46 +101,47 @@ namespace BevCapital.Stocks.Data.Migrations
 
                     b.HasKey("Symbol");
 
-                    b.ToTable("Stocks");
+                    b.ToTable("Stocks_Stocks");
                 });
 
             modelBuilder.Entity("BevCapital.Stocks.Domain.Entities.StockPrice", b =>
                 {
                     b.Property<string>("Symbol")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
+                        .HasMaxLength(20);
 
                     b.Property<decimal?>("ChangePercent")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(10,5)");
 
                     b.Property<decimal>("Close")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(10,5)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<decimal>("DelayedPrice")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(10,5)");
 
                     b.Property<DateTime>("DelayedPriceTime")
                         .HasColumnType("datetime(6)");
 
                     b.Property<decimal>("High")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(10,5)");
 
                     b.Property<decimal>("LatestPrice")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(10,5)");
 
                     b.Property<DateTime>("LatestPriceTime")
                         .HasColumnType("datetime(6)");
 
                     b.Property<decimal>("Low")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(10,5)");
 
                     b.Property<decimal>("Open")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(10,5)");
 
                     b.Property<decimal>("PreviousClosePrice")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(10,5)");
 
                     b.Property<DateTime?>("RowVersion")
                         .IsConcurrencyToken()
@@ -103,7 +153,22 @@ namespace BevCapital.Stocks.Data.Migrations
 
                     b.HasKey("Symbol");
 
-                    b.ToTable("StockPrice");
+                    b.ToTable("Stocks_StockPrices");
+                });
+
+            modelBuilder.Entity("BevCapital.Stocks.Domain.Entities.AppUserStock", b =>
+                {
+                    b.HasOne("BevCapital.Stocks.Domain.Entities.AppUser", "AppUser")
+                        .WithMany("AppUserStocks")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BevCapital.Stocks.Domain.Entities.Stock", "Stock")
+                        .WithMany("AppUserStocks")
+                        .HasForeignKey("Symbol")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BevCapital.Stocks.Domain.Entities.StockPrice", b =>

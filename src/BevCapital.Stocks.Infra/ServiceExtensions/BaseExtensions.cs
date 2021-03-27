@@ -4,7 +4,7 @@ using BevCapital.Stocks.Application.UseCases.Stocks;
 using BevCapital.Stocks.Domain.Notifications;
 using BevCapital.Stocks.Infra.DataProviders;
 using BevCapital.Stocks.Infra.Notifications;
-using BevCapital.Stocks.Infra.Security;
+using BevCapital.Stocks.Infra.Security.Tokens;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

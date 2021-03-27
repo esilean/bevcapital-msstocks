@@ -1,5 +1,6 @@
 ﻿using BevCapital.Stocks.Application.Gateways.Security;
-using BevCapital.Stocks.Infra.Security;
+using BevCapital.Stocks.Infra.Security.AppUser;
+using BevCapital.Stocks.Infra.Security.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +26,9 @@ namespace BevCapital.Stocks.Infra.ServiceExtensions
                 });
             });
 
+            services.AddScoped<IAppUserAccessor, AppUserAccessor>();
             services.AddSingleton<ITokenSecret, TokenSecret>();
+
             services.ConfigureJwt();
 
             return services;

@@ -1,4 +1,4 @@
-﻿namespace BevCapital.Stocks.Infra.Security
+﻿namespace BevCapital.Stocks.Infra.Security.Tokens
 {
     public class TokenSettings
     {
