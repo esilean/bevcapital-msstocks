@@ -14,12 +14,12 @@ namespace BevCapital.Stocks.Data.Context.Configs
                 new
                 {
                     ua.AppUserId,
-                    ua.Symbol
+                    ua.StockId
                 });
 
             builder.Property(x => x.AppUserId)
                    .IsRequired();
-            builder.Property(x => x.Symbol)
+            builder.Property(x => x.StockId)
                    .HasMaxLength(20)
                    .IsRequired();
 
@@ -29,7 +29,7 @@ namespace BevCapital.Stocks.Data.Context.Configs
 
             builder.HasOne(a => a.Stock)
                    .WithMany(u => u.AppUserStocks)
-                   .HasForeignKey(a => a.Symbol);
+                   .HasForeignKey(a => a.StockId);
         }
     }
 }

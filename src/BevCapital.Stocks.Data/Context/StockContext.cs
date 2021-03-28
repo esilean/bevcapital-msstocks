@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BevCapital.Stocks.Data.Context
 {
-    public class StocksContext : DbContext
+    public class StockContext : DbContext
     {
-        public StocksContext(DbContextOptions<StocksContext> options)
+        public StockContext(DbContextOptions<StockContext> options)
                 : base(options)
         { }
 

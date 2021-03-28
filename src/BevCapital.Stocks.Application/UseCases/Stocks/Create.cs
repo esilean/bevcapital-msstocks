@@ -1,5 +1,5 @@
-﻿using BevCapital.Stocks.Application.DataProviders;
-using BevCapital.Stocks.Application.Errors;
+﻿using BevCapital.Stocks.Application.Errors;
+using BevCapital.Stocks.Application.Gateways.EventsStore;
 using BevCapital.Stocks.Domain.Constants;
 using BevCapital.Stocks.Domain.Entities;
 using BevCapital.Stocks.Domain.Notifications;
@@ -15,7 +15,7 @@ namespace BevCapital.Stocks.Application.UseCases.Stocks
 {
     public class Create
     {
-        public class Command : IRequest
+        public class CreateStockCommand : IRequest
         {
             public string Symbol { get; set; }
             public string Name { get; set; }
@@ -23,7 +23,7 @@ namespace BevCapital.Stocks.Application.UseCases.Stocks
             public string Website { get; set; }
         }
 
-        public class CommandValidator : AbstractValidator<Command>
+        public class CommandValidator : AbstractValidator<CreateStockCommand>
         {
             public CommandValidator()
             {
@@ -34,22 +34,25 @@ namespace BevCapital.Stocks.Application.UseCases.Stocks
             }
         }
 
-        public class Handler : IRequestHandler<Command>
+        public class Handler : IRequestHandler<CreateStockCommand>
         {
             private readonly IUnitOfWork _unitOfWork;
             private readonly IAppNotificationHandler _appNotificationHandler;
             private readonly IDistributedCache _distributedCache;
+            private readonly IEventStoreApp<Stock> _stockEventStoreApp;
 
             public Handler(IUnitOfWork unitOfWork,
                            IAppNotificationHandler appNotificationHandler,
-                           IDistributedCache distributedCache)
+                           IDistributedCache distributedCache,
+                           IEventStoreApp<Stock> stockEventStoreApp)
             {
                 _unitOfWork = unitOfWork;
                 _appNotificationHandler = appNotificationHandler;
                 _distributedCache = distributedCache;
+                _stockEventStoreApp = stockEventStoreApp;
             }
 
-            public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Unit> Handle(CreateStockCommand request, CancellationToken cancellationToken)
             {
                 if (await _unitOfWork.Stocks.FindAsync(request.Symbol) != null)
                 {
@@ -64,18 +67,22 @@ namespace BevCapital.Stocks.Application.UseCases.Stocks
                     return Unit.Value;
                 }
 
-                stock.InitPrice();
-
                 await _unitOfWork.Stocks.AddAsync(stock);
                 var success = await _unitOfWork.SaveAsync();
                 if (success)
                 {
-                    await _distributedCache.RemoveAsync(CacheKeys.LIST_ALL_STOCKS, cancellationToken);
+                    await AddEventStore(stock);
 
+                    await _distributedCache.RemoveAsync(CacheKeys.LIST_ALL_STOCKS, cancellationToken);
                     return Unit.Value;
                 }
 
                 throw new AppException(HttpStatusCode.InternalServerError);
+            }
+
+            private async Task AddEventStore(Stock stock)
+            {
+                await _stockEventStoreApp.Add(stock);
             }
         }
     }

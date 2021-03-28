@@ -5,6 +5,7 @@ using Serilog.Events;
 using Serilog.Formatting.Compact;
 using Serilog.Sinks.AwsCloudWatch;
 using System;
+using System.Linq;
 
 namespace BevCapital.Stocks.Infra.Logger
 {
@@ -35,7 +36,9 @@ namespace BevCapital.Stocks.Infra.Logger
 
         public static LoggerConfiguration AppendConsoleLogger(this LoggerConfiguration logger)
         {
-            return logger.WriteTo.Console();
+            return logger
+                    .Filter.ByExcluding(c => c.Properties.Any(p => p.Value.ToString().Contains("health")))
+                    .WriteTo.Console();
         }
 
         public static LoggerConfiguration AppendAwsCloudwatchLogger(this LoggerConfiguration logger,

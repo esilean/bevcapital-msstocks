@@ -11,7 +11,7 @@ namespace BevCapital.Stocks.Infra.ServiceExtensions
 {
     public static class AWSExtensions
     {
-        public static IServiceCollection ConfigureAWS(this IServiceCollection services,
+        public static IServiceCollection AddAppAWS(this IServiceCollection services,
                                                            IConfiguration configuration,
                                                            IWebHostEnvironment environment)
         {

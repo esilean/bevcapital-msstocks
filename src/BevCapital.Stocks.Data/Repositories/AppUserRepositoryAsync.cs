@@ -9,9 +9,9 @@ namespace BevCapital.Stocks.Data.Repositories
 
     public class AppUserRepositoryAsync : IAppUserRepositoryAsync
     {
-        private readonly StocksContext _stocksContext;
+        private readonly StockContext _stocksContext;
 
-        public AppUserRepositoryAsync(StocksContext stocksContext)
+        public AppUserRepositoryAsync(StockContext stocksContext)
         {
             _stocksContext = stocksContext;
         }

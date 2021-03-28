@@ -18,8 +18,8 @@ namespace BevCapital.Stocks.Domain.Tests.Entities
             var stock = Stock.Create(symbol, name, exchange, website);
 
             // ASSERT
-            Assert.Equal(symbol, stock.Symbol);
-            Assert.Equal(name, stock.Name);
+            Assert.Equal(symbol, stock.Id);
+            Assert.Equal(name, stock.StockName);
             Assert.Equal(exchange, stock.Exchange);
             Assert.Equal(website, stock.Website);
         }

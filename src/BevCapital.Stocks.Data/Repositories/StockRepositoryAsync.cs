@@ -10,9 +10,9 @@ namespace BevCapital.Stocks.Data.Repositories
 
     public class StockRepositoryAsync : IStockRepositoryAsync
     {
-        private readonly StocksContext _stocksContext;
+        private readonly StockContext _stocksContext;
 
-        public StockRepositoryAsync(StocksContext stocksContext)
+        public StockRepositoryAsync(StockContext stocksContext)
         {
             _stocksContext = stocksContext;
         }
@@ -25,7 +25,7 @@ namespace BevCapital.Stocks.Data.Repositories
         public async Task<Stock> FindAsync(string symbol)
         {
             return await _stocksContext.Stocks.Include(x => x.StockPrice)
-                                              .FirstOrDefaultAsync(x => x.Symbol == symbol);
+                                              .FirstOrDefaultAsync(x => x.Id == symbol);
         }
 
         public async Task AddAsync(Stock stock)

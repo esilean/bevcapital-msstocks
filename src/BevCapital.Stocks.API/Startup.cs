@@ -1,11 +1,9 @@
 using Amazon.XRay.Recorder.Core;
 using Amazon.XRay.Recorder.Core.Internal.Entities;
-using BevCapital.Stocks.API.Filters;
 using BevCapital.Stocks.API.Middlewares;
-using BevCapital.Stocks.Application.UseCases.Stocks;
 using BevCapital.Stocks.Data.Context;
+using BevCapital.Stocks.Domain.Entities;
 using BevCapital.Stocks.Infra.ServiceExtensions;
-using FluentValidation.AspNetCore;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -18,7 +16,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using System;
-using System.Text.Json;
 
 namespace BevCapital.Stocks.API
 {
@@ -35,28 +32,24 @@ namespace BevCapital.Stocks.API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers(opts =>
-            {
-                opts.Filters.Add<NotificationFilter>();
-            })
-            .AddFluentValidation(cfg =>
-            {
-                cfg.RegisterValidatorsFromAssemblyContaining<Create>();
-            });
-
             services
-                    .ConfigureCommonServices(Configuration)
-                    .ConfigureSwaggerLogon()
-                    .ConfigureSecurity()
-                    .ConfigureDistributedCache(Configuration)
-                    .ConfigureAWS(Configuration, HostingEnvironment)
-                    .ConfigureDatabase(Configuration)
-                    .ConfigureHealthCheck(Configuration);
+                    .AddAppCore(Configuration)
+                    .AddAppSwaggerLogon()
+                    .AddAppSecurity()
+                    .AddAppDistributedCache(Configuration)
+                    .AddAppAWS(Configuration, HostingEnvironment)
+                    .AddAppDatabase(Configuration)
+                    .AddAppHealthCheck(Configuration);
+
+            services.AddAppEventStore(Configuration)
+                    .AddAppEventStoreAggregate<Stock>();
+
         }
 
         public void Configure(IApplicationBuilder app,
                               IWebHostEnvironment env,
-                              StocksContext context,
+                              StockContext stockContext,
+                              EventStoreContext eventStoreContext,
                               ILogger<Startup> logger)
         {
             Log.Information($"Hosting enviroment = {env.EnvironmentName}");
@@ -94,7 +87,7 @@ namespace BevCapital.Stocks.API
 
                 endpoints.Map("/", async (context) =>
                 {
-                    var result = JsonSerializer.Serialize(new
+                    var result = System.Text.Json.JsonSerializer.Serialize(new
                     {
                         machineName = Environment.MachineName,
                         appName = env.ApplicationName,
@@ -106,19 +99,23 @@ namespace BevCapital.Stocks.API
                 });
             });
 
-            Seed(context, logger);
+            Seed(stockContext, eventStoreContext, logger);
         }
 
-        private void Seed(StocksContext context, ILogger<Startup> logger)
+        private void Seed(StockContext stockContext, EventStoreContext eventStoreContext, ILogger<Startup> logger)
         {
             // XRAY - EFCore - AsyncLocal Problems
             String traceId = TraceId.NewId();
             AWSXRayRecorder.Instance.BeginSegment("DB Migration", traceId);
             try
             {
-                logger.LogInformation("Initializing Database Migration.");
-                context.Database.Migrate();
-                logger.LogInformation("Finishing Database Migration...");
+                logger.LogInformation("Initializing StockContext Database Migration.");
+                stockContext.Database.Migrate();
+                logger.LogInformation("Finishing StockContext Database Migration...");
+
+                logger.LogInformation("Initializing EventStoreContext Database Migration.");
+                eventStoreContext.Database.Migrate();
+                logger.LogInformation("Finishing EventStoreContext Database Migration...");
             }
             catch (Exception e)
             {

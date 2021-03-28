@@ -1,7 +1,7 @@
 ﻿using BevCapital.Stocks.Application.UseCases.Stocks.Response;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace BevCapital.Stocks.Application.UseCases.AppUserStocks.Response
 {
@@ -10,7 +10,7 @@ namespace BevCapital.Stocks.Application.UseCases.AppUserStocks.Response
         public Guid Id { get; set; }
         public string Name { get; set; }
 
-        [JsonPropertyName("stocks")]
+        [JsonProperty("stocks")]
         public List<StockOut> StockOuts { get; set; }
     }
 }

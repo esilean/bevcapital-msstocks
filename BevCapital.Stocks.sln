@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30517.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BevCapital.Stocks.Domain", "src\BevCapital.Stocks.Domain\BevCapital.Stocks.Domain.csproj", "{F562F330-3C76-4A54-9DD4-C76298A60753}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BevCapital.Stocks.Domain", "src\BevCapital.Stocks.Domain\BevCapital.Stocks.Domain.csproj", "{F562F330-3C76-4A54-9DD4-C76298A60753}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BevCapital.Stocks.Application", "src\BevCapital.Stocks.Application\BevCapital.Stocks.Application.csproj", "{1AFC5F7F-5643-4369-9E84-EC6273E01867}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BevCapital.Stocks.Application", "src\BevCapital.Stocks.Application\BevCapital.Stocks.Application.csproj", "{1AFC5F7F-5643-4369-9E84-EC6273E01867}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BevCapital.Stocks.Data", "src\BevCapital.Stocks.Data\BevCapital.Stocks.Data.csproj", "{3D572139-374A-4F3E-AA55-7C4FFB1C09AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BevCapital.Stocks.Data", "src\BevCapital.Stocks.Data\BevCapital.Stocks.Data.csproj", "{3D572139-374A-4F3E-AA55-7C4FFB1C09AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BevCapital.Stocks.Infra", "src\BevCapital.Stocks.Infra\BevCapital.Stocks.Infra.csproj", "{7C55E313-2DE3-4DB1-B15E-FF49E162D8A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BevCapital.Stocks.Infra", "src\BevCapital.Stocks.Infra\BevCapital.Stocks.Infra.csproj", "{7C55E313-2DE3-4DB1-B15E-FF49E162D8A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BevCapital.Stocks.API", "src\BevCapital.Stocks.API\BevCapital.Stocks.API.csproj", "{367E4100-BC6A-42CB-8886-D4B8DBE9F39A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BevCapital.Stocks.API", "src\BevCapital.Stocks.API\BevCapital.Stocks.API.csproj", "{367E4100-BC6A-42CB-8886-D4B8DBE9F39A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01-API", "01-API", "{3CDC6BD0-8A72-4AB6-BCDB-F7E17632C685}"
 EndProject
@@ -23,7 +23,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "04-Infra", "04-Infra", "{D4
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2DEDCC54-0F9B-4287-AB4E-C39219A753EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BevCapital.Stocks.Domain.Tests", "tests\BevCapital.Stocks.Domain.Tests\BevCapital.Stocks.Domain.Tests.csproj", "{956BE756-44FC-46A4-B7F2-C41FA19A8351}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BevCapital.Stocks.Domain.Tests", "tests\BevCapital.Stocks.Domain.Tests\BevCapital.Stocks.Domain.Tests.csproj", "{956BE756-44FC-46A4-B7F2-C41FA19A8351}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BevCapital.Stocks.Domain.Core", "src\BevCapital.Stocks.Domain.Core\BevCapital.Stocks.Domain.Core.csproj", "{8DB014E8-12BE-4220-853A-FD03C5A2EFE3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +57,10 @@ Global
 		{956BE756-44FC-46A4-B7F2-C41FA19A8351}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{956BE756-44FC-46A4-B7F2-C41FA19A8351}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{956BE756-44FC-46A4-B7F2-C41FA19A8351}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DB014E8-12BE-4220-853A-FD03C5A2EFE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DB014E8-12BE-4220-853A-FD03C5A2EFE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DB014E8-12BE-4220-853A-FD03C5A2EFE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DB014E8-12BE-4220-853A-FD03C5A2EFE3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,6 +72,7 @@ Global
 		{7C55E313-2DE3-4DB1-B15E-FF49E162D8A3} = {D4282B97-3790-4917-9608-01CA65A5A525}
 		{367E4100-BC6A-42CB-8886-D4B8DBE9F39A} = {3CDC6BD0-8A72-4AB6-BCDB-F7E17632C685}
 		{956BE756-44FC-46A4-B7F2-C41FA19A8351} = {2DEDCC54-0F9B-4287-AB4E-C39219A753EB}
+		{8DB014E8-12BE-4220-853A-FD03C5A2EFE3} = {ECF176A7-5C54-4920-BA9F-6BF51808B354}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {22EEC33C-9276-44B0-A71D-DB1ADB4A61E6}

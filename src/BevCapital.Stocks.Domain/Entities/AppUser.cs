@@ -9,8 +9,6 @@ namespace BevCapital.Stocks.Domain.Entities
         public Guid Id { get; }
         public string Name { get; }
         public string Email { get; }
-        public DateTime CreatedAt { get; }
-        public DateTime UpdatedAt { get; }
         public ICollection<AppUserStock> AppUserStocks { get; private set; }
 
         /// <summary>
@@ -24,13 +22,11 @@ namespace BevCapital.Stocks.Domain.Entities
         /// <param name="id"></param>
         /// <param name="name"></param>
         /// <param name="email"></param>
-        public AppUser(Guid id, string name, string email, DateTime createdAt, DateTime updatedAt)
+        public AppUser(Guid id, string name, string email)
         {
             Id = id;
             Name = name;
             Email = email;
-            CreatedAt = createdAt;
-            UpdatedAt = updatedAt;
 
             Validate(this, new AppUserValidator());
         }

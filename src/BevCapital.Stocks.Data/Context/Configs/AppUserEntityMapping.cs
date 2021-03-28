@@ -18,9 +18,11 @@ namespace BevCapital.Stocks.Data.Context.Configs
             builder.Property(e => e.Email)
                    .IsRequired()
                    .HasMaxLength(100);
-            builder.Property(e => e.CreatedAt)
+            builder.Property(e => e.CreatedAtUtc)
+                   .ValueGeneratedOnAdd()
                    .IsRequired();
-            builder.Property(e => e.UpdatedAt)
+            builder.Property(e => e.UpdatedAtUtc)
+                   .ValueGeneratedOnAddOrUpdate()
                    .IsRequired();
 
             builder.Property(e => e.RowVersion)

@@ -15,12 +15,12 @@ namespace BevCapital.Stocks.Application.UseCases.AppUserStocks
 {
     public class Delete
     {
-        public class Command : IRequest
+        public class DeleteAppUserStockCommand : IRequest
         {
             public string Symbol { get; set; }
         }
 
-        public class CommandValidator : AbstractValidator<Command>
+        public class CommandValidator : AbstractValidator<DeleteAppUserStockCommand>
         {
             public CommandValidator()
             {
@@ -28,7 +28,7 @@ namespace BevCapital.Stocks.Application.UseCases.AppUserStocks
             }
         }
 
-        public class Handler : IRequestHandler<Command>
+        public class Handler : IRequestHandler<DeleteAppUserStockCommand>
         {
             private readonly IUnitOfWork _unitOfWork;
             private readonly IAppUserAccessor _appUserAccessor;
@@ -46,7 +46,7 @@ namespace BevCapital.Stocks.Application.UseCases.AppUserStocks
                 _distributedCache = distributedCache;
             }
 
-            public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Unit> Handle(DeleteAppUserStockCommand request, CancellationToken cancellationToken)
             {
                 if (!Guid.TryParse(_appUserAccessor.GetCurrentId(), out Guid appUserId))
                 {

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace BevCapital.Stocks.API.Filters
+namespace BevCapital.Stocks.Infra.Filters
 {
     public class NotificationFilter : IAsyncResultFilter
     {

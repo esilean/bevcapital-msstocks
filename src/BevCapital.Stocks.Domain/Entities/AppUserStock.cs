@@ -8,14 +8,14 @@ namespace BevCapital.Stocks.Domain.Entities
 
         public virtual AppUser AppUser { get; private  set; }
 
-        public string Symbol { get; private set; }
+        public string StockId { get; private set; }
 
         public virtual Stock Stock { get; private set; }
 
-        public AppUserStock(Guid appUserId, string symbol)
+        public AppUserStock(Guid appUserId, string stockId)
         {
             AppUserId = appUserId;
-            Symbol = symbol;
+            StockId = stockId;
         }
     }
 }

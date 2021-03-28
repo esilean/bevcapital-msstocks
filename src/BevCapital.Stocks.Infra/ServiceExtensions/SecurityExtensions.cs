@@ -12,7 +12,7 @@ namespace BevCapital.Stocks.Infra.ServiceExtensions
 {
     public static class SecurityExtensions
     {
-        public static IServiceCollection ConfigureSecurity(this IServiceCollection services)
+        public static IServiceCollection AddAppSecurity(this IServiceCollection services)
         {
             services.AddCors(opt =>
             {

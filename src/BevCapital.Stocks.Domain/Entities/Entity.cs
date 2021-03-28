@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
+using System;
 
 namespace BevCapital.Stocks.Domain.Entities
 {
@@ -7,6 +8,9 @@ namespace BevCapital.Stocks.Domain.Entities
     {
         public bool Valid { get; private set; }
         public bool Invalid => !Valid;
+        public DateTime CreatedAtUtc { get; private set; }
+        public DateTime UpdatedAtUtc { get; private set; }
+
         public ValidationResult ValidationResult { get; private set; }
 
         [System.ComponentModel.DataAnnotations.Timestamp]

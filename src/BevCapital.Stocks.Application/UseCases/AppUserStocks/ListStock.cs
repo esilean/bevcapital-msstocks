@@ -17,9 +17,9 @@ namespace BevCapital.Stocks.Application.UseCases.AppUserStocks
 {
     public class ListStock
     {
-        public class Query : IRequest<AppUserStockOut> { }
+        public class ListAppUserStockQuery : IRequest<AppUserStockOut> { }
 
-        public class Handler : IRequestHandler<Query, AppUserStockOut>
+        public class Handler : IRequestHandler<ListAppUserStockQuery, AppUserStockOut>
         {
 
             private readonly IUnitOfWork _unitOfWork;
@@ -41,7 +41,7 @@ namespace BevCapital.Stocks.Application.UseCases.AppUserStocks
                 _appNotificationHandler = appNotificationHandler;
             }
 
-            public async Task<AppUserStockOut> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<AppUserStockOut> Handle(ListAppUserStockQuery request, CancellationToken cancellationToken)
             {
                 if (!Guid.TryParse(_appUserAccessor.GetCurrentId(), out Guid appUserId))
                 {

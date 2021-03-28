@@ -3,14 +3,16 @@ using System;
 using BevCapital.Stocks.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BevCapital.Stocks.Data.Migrations
 {
-    [DbContext(typeof(StocksContext))]
-    partial class StocksContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(StockContext))]
+    [Migration("20210328171957_Stock_InitialTables")]
+    partial class Stock_InitialTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -23,7 +25,8 @@ namespace BevCapital.Stocks.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Email")
@@ -41,7 +44,8 @@ namespace BevCapital.Stocks.Data.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp(6)");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
@@ -54,32 +58,28 @@ namespace BevCapital.Stocks.Data.Migrations
                     b.Property<Guid>("AppUserId")
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("Symbol")
+                    b.Property<string>("StockId")
                         .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
                         .HasMaxLength(20);
 
-                    b.HasKey("AppUserId", "Symbol");
+                    b.HasKey("AppUserId", "StockId");
 
-                    b.HasIndex("Symbol");
+                    b.HasIndex("StockId");
 
                     b.ToTable("Stocks_AppUserStocks");
                 });
 
             modelBuilder.Entity("BevCapital.Stocks.Domain.Entities.Stock", b =>
                 {
-                    b.Property<string>("Symbol")
+                    b.Property<string>("Id")
                         .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
                         .HasMaxLength(20);
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Exchange")
-                        .IsRequired()
-                        .HasColumnType("varchar(100) CHARACTER SET utf8mb4")
-                        .HasMaxLength(100);
-
-                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("varchar(100) CHARACTER SET utf8mb4")
                         .HasMaxLength(100);
@@ -89,7 +89,13 @@ namespace BevCapital.Stocks.Data.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp(6)");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<string>("StockName")
+                        .IsRequired()
+                        .HasColumnType("varchar(100) CHARACTER SET utf8mb4")
+                        .HasMaxLength(100);
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Website")
@@ -97,14 +103,14 @@ namespace BevCapital.Stocks.Data.Migrations
                         .HasColumnType("varchar(100) CHARACTER SET utf8mb4")
                         .HasMaxLength(100);
 
-                    b.HasKey("Symbol");
+                    b.HasKey("Id");
 
                     b.ToTable("Stocks_Stocks");
                 });
 
             modelBuilder.Entity("BevCapital.Stocks.Domain.Entities.StockPrice", b =>
                 {
-                    b.Property<string>("Symbol")
+                    b.Property<string>("Id")
                         .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
                         .HasMaxLength(20);
 
@@ -114,7 +120,8 @@ namespace BevCapital.Stocks.Data.Migrations
                     b.Property<decimal>("Close")
                         .HasColumnType("decimal(10,5)");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)");
 
                     b.Property<decimal>("DelayedPrice")
@@ -146,10 +153,11 @@ namespace BevCapital.Stocks.Data.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp(6)");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime(6)");
 
-                    b.HasKey("Symbol");
+                    b.HasKey("Id");
 
                     b.ToTable("Stocks_StockPrices");
                 });
@@ -164,7 +172,7 @@ namespace BevCapital.Stocks.Data.Migrations
 
                     b.HasOne("BevCapital.Stocks.Domain.Entities.Stock", "Stock")
                         .WithMany("AppUserStocks")
-                        .HasForeignKey("Symbol")
+                        .HasForeignKey("StockId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -173,7 +181,7 @@ namespace BevCapital.Stocks.Data.Migrations
                 {
                     b.HasOne("BevCapital.Stocks.Domain.Entities.Stock", "Stock")
                         .WithOne("StockPrice")
-                        .HasForeignKey("BevCapital.Stocks.Domain.Entities.StockPrice", "Symbol")
+                        .HasForeignKey("BevCapital.Stocks.Domain.Entities.StockPrice", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

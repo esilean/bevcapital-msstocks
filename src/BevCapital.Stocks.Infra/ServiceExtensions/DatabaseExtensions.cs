@@ -10,7 +10,7 @@ namespace BevCapital.Stocks.Infra.ServiceExtensions
 {
     public static class DatabaseExtensions
     {
-        public static IServiceCollection ConfigureDatabase(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddAppDatabase(this IServiceCollection services, IConfiguration configuration)
         {
             var connString = configuration.GetConnectionString("SqlCNN");
 
@@ -19,7 +19,7 @@ namespace BevCapital.Stocks.Infra.ServiceExtensions
             connString.Replace("RDS_ENDPOINT", rdsEndpoint);
             connString.Replace("RDS_PASSWORD", rdsPassword);
 
-            services.AddDbContext<StocksContext>(opts =>
+            services.AddDbContext<StockContext>(opts =>
             {
                 opts.UseMySql(connString);
                 opts.AddXRayInterceptor(true);
@@ -28,7 +28,7 @@ namespace BevCapital.Stocks.Infra.ServiceExtensions
             services.AddScoped<IStockRepositoryAsync, StockRepositoryAsync>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<StocksContext>();
+            services.AddScoped<StockContext>();
 
             return services;
         }

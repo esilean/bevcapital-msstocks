@@ -16,12 +16,12 @@ namespace BevCapital.Stocks.Application.UseCases.AppUserStocks
 {
     public class Add
     {
-        public class Command : IRequest
+        public class AddAppUserStockCommand : IRequest
         {
             public string Symbol { get; set; }
         }
 
-        public class CommandValidator : AbstractValidator<Command>
+        public class CommandValidator : AbstractValidator<AddAppUserStockCommand>
         {
             public CommandValidator()
             {
@@ -29,7 +29,7 @@ namespace BevCapital.Stocks.Application.UseCases.AppUserStocks
             }
         }
 
-        public class Handler : IRequestHandler<Command>
+        public class Handler : IRequestHandler<AddAppUserStockCommand>
         {
             private readonly IUnitOfWork _unitOfWork;
             private readonly IAppUserAccessor _appUserAccessor;
@@ -47,7 +47,7 @@ namespace BevCapital.Stocks.Application.UseCases.AppUserStocks
                 _distributedCache = distributedCache;
             }
 
-            public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Unit> Handle(AddAppUserStockCommand request, CancellationToken cancellationToken)
             {
                 if (!Guid.TryParse(_appUserAccessor.GetCurrentId(), out Guid appUserId))
                 {

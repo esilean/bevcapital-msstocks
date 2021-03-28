@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BevCapital.Stocks.Data.Migrations
 {
-    public partial class AddStocksTables : Migration
+    public partial class Stock_InitialTables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,12 +13,14 @@ namespace BevCapital.Stocks.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    CreatedAtUtc = table.Column<DateTime>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UpdatedAtUtc = table.Column<DateTime>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn),
                     RowVersion = table.Column<DateTime>(rowVersion: true, nullable: true)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn),
                     Name = table.Column<string>(maxLength: 100, nullable: false),
-                    Email = table.Column<string>(maxLength: 100, nullable: false),
-                    CreatedAt = table.Column<DateTime>(nullable: false),
-                    UpdatedAt = table.Column<DateTime>(nullable: false)
+                    Email = table.Column<string>(maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -29,18 +31,20 @@ namespace BevCapital.Stocks.Data.Migrations
                 name: "Stocks_Stocks",
                 columns: table => new
                 {
-                    Symbol = table.Column<string>(maxLength: 20, nullable: false),
+                    Id = table.Column<string>(maxLength: 20, nullable: false),
+                    CreatedAtUtc = table.Column<DateTime>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UpdatedAtUtc = table.Column<DateTime>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn),
                     RowVersion = table.Column<DateTime>(rowVersion: true, nullable: true)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn),
-                    Name = table.Column<string>(maxLength: 100, nullable: false),
+                    StockName = table.Column<string>(maxLength: 100, nullable: false),
                     Exchange = table.Column<string>(maxLength: 100, nullable: false),
-                    Website = table.Column<string>(maxLength: 100, nullable: false),
-                    CreatedAt = table.Column<DateTime>(nullable: false),
-                    UpdatedAt = table.Column<DateTime>(nullable: false)
+                    Website = table.Column<string>(maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Stocks_Stocks", x => x.Symbol);
+                    table.PrimaryKey("PK_Stocks_Stocks", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -48,11 +52,11 @@ namespace BevCapital.Stocks.Data.Migrations
                 columns: table => new
                 {
                     AppUserId = table.Column<Guid>(nullable: false),
-                    Symbol = table.Column<string>(maxLength: 20, nullable: false)
+                    StockId = table.Column<string>(maxLength: 20, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Stocks_AppUserStocks", x => new { x.AppUserId, x.Symbol });
+                    table.PrimaryKey("PK_Stocks_AppUserStocks", x => new { x.AppUserId, x.StockId });
                     table.ForeignKey(
                         name: "FK_Stocks_AppUserStocks_Stocks_AppUsers_AppUserId",
                         column: x => x.AppUserId,
@@ -60,10 +64,10 @@ namespace BevCapital.Stocks.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Stocks_AppUserStocks_Stocks_Stocks_Symbol",
-                        column: x => x.Symbol,
+                        name: "FK_Stocks_AppUserStocks_Stocks_Stocks_StockId",
+                        column: x => x.StockId,
                         principalTable: "Stocks_Stocks",
-                        principalColumn: "Symbol",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -71,7 +75,11 @@ namespace BevCapital.Stocks.Data.Migrations
                 name: "Stocks_StockPrices",
                 columns: table => new
                 {
-                    Symbol = table.Column<string>(maxLength: 20, nullable: false),
+                    Id = table.Column<string>(maxLength: 20, nullable: false),
+                    CreatedAtUtc = table.Column<DateTime>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UpdatedAtUtc = table.Column<DateTime>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn),
                     RowVersion = table.Column<DateTime>(rowVersion: true, nullable: true)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn),
                     Open = table.Column<decimal>(type: "decimal(10,5)", nullable: false),
@@ -83,25 +91,23 @@ namespace BevCapital.Stocks.Data.Migrations
                     DelayedPrice = table.Column<decimal>(type: "decimal(10,5)", nullable: false),
                     DelayedPriceTime = table.Column<DateTime>(nullable: false),
                     PreviousClosePrice = table.Column<decimal>(type: "decimal(10,5)", nullable: false),
-                    ChangePercent = table.Column<decimal>(type: "decimal(10,5)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(nullable: false),
-                    UpdatedAt = table.Column<DateTime>(nullable: false)
+                    ChangePercent = table.Column<decimal>(type: "decimal(10,5)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Stocks_StockPrices", x => x.Symbol);
+                    table.PrimaryKey("PK_Stocks_StockPrices", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Stocks_StockPrices_Stocks_Stocks_Symbol",
-                        column: x => x.Symbol,
+                        name: "FK_Stocks_StockPrices_Stocks_Stocks_Id",
+                        column: x => x.Id,
                         principalTable: "Stocks_Stocks",
-                        principalColumn: "Symbol",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Stocks_AppUserStocks_Symbol",
+                name: "IX_Stocks_AppUserStocks_StockId",
                 table: "Stocks_AppUserStocks",
-                column: "Symbol");
+                column: "StockId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

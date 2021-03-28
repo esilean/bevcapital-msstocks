@@ -6,9 +6,9 @@ namespace BevCapital.Stocks.Data.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly StocksContext _stocksContext;
+        private readonly StockContext _stocksContext;
 
-        public UnitOfWork(StocksContext stocksContext)
+        public UnitOfWork(StockContext stocksContext)
         {
             _stocksContext = stocksContext;
             Stocks = new StockRepositoryAsync(_stocksContext);

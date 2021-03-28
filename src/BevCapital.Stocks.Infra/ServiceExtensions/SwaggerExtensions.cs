@@ -9,7 +9,7 @@ namespace BevCapital.Stocks.Infra.ServiceExtensions
 {
     public static class SwaggerExtensions
     {
-        public static IServiceCollection ConfigureSwaggerLogon(this IServiceCollection services)
+        public static IServiceCollection AddAppSwaggerLogon(this IServiceCollection services)
         {
             services.AddSwaggerGen(opts =>
             {

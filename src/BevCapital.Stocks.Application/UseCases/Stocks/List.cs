@@ -14,9 +14,9 @@ namespace BevCapital.Stocks.Application.UseCases.Stocks
 {
     public class ListStock
     {
-        public class Query : IRequest<List<StockOut>> { }
+        public class ListStockQuery : IRequest<List<StockOut>> { }
 
-        public class Handler : IRequestHandler<Query, List<StockOut>>
+        public class Handler : IRequestHandler<ListStockQuery, List<StockOut>>
         {
 
             private readonly IUnitOfWork _unitOfWork;
@@ -30,7 +30,7 @@ namespace BevCapital.Stocks.Application.UseCases.Stocks
                 _distributedCache = distributedCache;
             }
 
-            public async Task<List<StockOut>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<List<StockOut>> Handle(ListStockQuery request, CancellationToken cancellationToken)
             {
                 var cachedStocks = await _distributedCache.GetAsync<List<StockOut>>(CacheKeys.LIST_ALL_STOCKS);
                 if (cachedStocks == null || !cachedStocks.Any())
