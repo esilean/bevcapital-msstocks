@@ -131,6 +131,10 @@ Resources:
       RepositoryName: !Sub ${RepositoryName}-xray
 
   Pipeline:
+    DependsOn:
+      - ECRServiceRepository
+      - ECRNginxRepository
+      - ECRXrayRepository
     Type: "AWS::CodePipeline::Pipeline"
     Properties:
       RoleArn: !GetAtt PipelineRole.Arn
