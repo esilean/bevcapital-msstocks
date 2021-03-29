@@ -20,5 +20,15 @@ namespace BevCapital.Stocks.Data.Repositories
         {
             return await _stocksContext.AppUsers.FindAsync(id);
         }
+
+        public async Task AddAsync(AppUser appUser)
+        {
+            await _stocksContext.AppUsers.AddAsync(appUser);
+        }
+
+        public void Remove(AppUser appUser)
+        {
+            _stocksContext.AppUsers.Remove(appUser);
+        }
     }
 }

@@ -12,5 +12,18 @@ namespace BevCapital.Stocks.Domain.Repositories
         /// <param name="id"></param>
         /// <returns></returns>
         Task<AppUser> FindAsync(Guid id);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="appUser"></param>
+        /// <returns></returns>
+        Task AddAsync(AppUser appUser);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="appUser"></param>
+        void Remove(AppUser appUser);
     }
 }

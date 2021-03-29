@@ -1,4 +1,5 @@
 ﻿using BevCapital.Stocks.Application.Gateways.EventsStore;
+using BevCapital.Stocks.Domain.Core.Events;
 using BevCapital.Stocks.Domain.Core.EventStores;
 using BevCapital.Stocks.Domain.Core.EventStores.Aggregate;
 using BevCapital.Stocks.Domain.EventStores.Repository;
@@ -36,7 +37,10 @@ namespace BevCapital.Stocks.Infra.EventsStore
                 throw new Exception($"{nameof(stream)} was null");
             }
 
-            //await _eventBus.Commit(stream);
+            // TODO
+            //await _eventBus.Send();
+
+            await Task.CompletedTask;
         }
     }
 }

@@ -21,8 +21,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BevCapital.Stocks.Background\BevCapital.Stocks.Background.csproj" />
     <ProjectReference Include="..\BevCapital.Stocks.Data\BevCapital.Stocks.Data.csproj" />
     <ProjectReference Include="..\BevCapital.Stocks.Infra\BevCapital.Stocks.Infra.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="appsecrets.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

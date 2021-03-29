@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace BevCapital.Stocks.Domain.Repositories
 {
-    public interface IUnitOfWork : IAsyncDisposable
+    public interface IUnitOfWork : IDisposable
     {
         IStockRepositoryAsync Stocks { get; }
         IAppUserRepositoryAsync AppUsers { get; }

@@ -20,9 +20,9 @@ namespace BevCapital.Stocks.Data.Repositories
         public IAppUserRepositoryAsync AppUsers { get; private set; }
         public IAppUserStockRepositoryAsync AppUserStocks { get; private set; }
 
-        public async ValueTask DisposeAsync()
+        public void Dispose()
         {
-            await _stocksContext.DisposeAsync();
+            _stocksContext.Dispose();
         }
 
         public async Task<bool> SaveAsync()

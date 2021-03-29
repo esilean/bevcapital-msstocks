@@ -1,6 +1,7 @@
 using Amazon.XRay.Recorder.Core;
 using Amazon.XRay.Recorder.Core.Internal.Entities;
 using BevCapital.Stocks.API.Middlewares;
+using BevCapital.Stocks.Background.ServiceExtensions;
 using BevCapital.Stocks.Data.Context;
 using BevCapital.Stocks.Domain.Entities;
 using BevCapital.Stocks.Infra.ServiceExtensions;
@@ -32,6 +33,8 @@ namespace BevCapital.Stocks.API
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSecrets(Configuration);
+
             services
                     .AddAppCore(Configuration)
                     .AddAppSwaggerLogon()
@@ -39,6 +42,7 @@ namespace BevCapital.Stocks.API
                     .AddAppDistributedCache(Configuration)
                     .AddAppAWS(Configuration, HostingEnvironment)
                     .AddAppDatabase(Configuration)
+                    .AddAppSQSService(Configuration)
                     .AddAppHealthCheck(Configuration);
 
             services.AddAppEventStore(Configuration)
@@ -53,6 +57,7 @@ namespace BevCapital.Stocks.API
                               ILogger<Startup> logger)
         {
             Log.Information($"Hosting enviroment = {env.EnvironmentName}");
+            Log.Information($"RDS_ENDPOINT = {Environment.GetEnvironmentVariable("RDS_ENDPOINT")}");
 
             app.UseMiddleware<ErrorHandlerMiddleware>();
             if (env.IsDevelopment())

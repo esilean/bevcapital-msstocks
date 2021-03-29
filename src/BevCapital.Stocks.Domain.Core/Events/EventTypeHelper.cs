@@ -1,5 +1,5 @@
-﻿using BevCapital.Stocks.Domain.Core.Events;
-using System;
+﻿using System;
+using System.Linq;
 
 namespace BevCapital.Stocks
 {
@@ -8,12 +8,7 @@ namespace BevCapital.Stocks
     {
         public static string GetTypeName(Type type)
         {
-            var name = type.FullName.ToLower().Replace("+", ".");
-
-            if (type is IEvent)
-            {
-                name += "_event";
-            }
+            var name = type.FullName.ToLower().Replace("+", ".").Split('.').Last();
 
             return name;
         }

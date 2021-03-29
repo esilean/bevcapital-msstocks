@@ -7,7 +7,7 @@ namespace BevCapital.Stocks.Domain.Entities
     public class AppUser : Entity
     {
         public Guid Id { get; }
-        public string Name { get; }
+        public string Name { get; private set; }
         public string Email { get; }
         public ICollection<AppUserStock> AppUserStocks { get; private set; }
 
@@ -22,13 +22,23 @@ namespace BevCapital.Stocks.Domain.Entities
         /// <param name="id"></param>
         /// <param name="name"></param>
         /// <param name="email"></param>
-        public AppUser(Guid id, string name, string email)
+        private AppUser(Guid id, string name, string email)
         {
             Id = id;
             Name = name;
             Email = email;
 
             Validate(this, new AppUserValidator());
+        }
+
+        public static AppUser Create(Guid id, string name, string email)
+        {
+            return new AppUser(id, name, email);
+        }
+
+        public void Update(string name)
+        {
+            Name = name;
         }
 
         internal class AppUserValidator : AbstractValidator<AppUser>

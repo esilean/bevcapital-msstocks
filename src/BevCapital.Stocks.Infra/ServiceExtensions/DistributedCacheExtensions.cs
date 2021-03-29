@@ -15,10 +15,6 @@ namespace BevCapital.Stocks.Infra.ServiceExtensions
             }
             else
             {
-                var cacheEndpoint = Environment.GetEnvironmentVariable("CACHE_ENDPOINT");
-                var cachePassword = Environment.GetEnvironmentVariable("CACHE_PASSWORD");
-                cacheCNN.Replace("CACHE_ENDPOINT", cacheEndpoint);
-                cacheCNN.Replace("CACHE_PASSWORD", cachePassword);
                 services.AddStackExchangeRedisCache(options =>
                 {
                     options.Configuration = cacheCNN;
