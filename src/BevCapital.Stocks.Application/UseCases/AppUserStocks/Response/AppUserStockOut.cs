@@ -9,7 +9,6 @@ namespace BevCapital.Stocks.Application.UseCases.AppUserStocks.Response
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public bool Updated { get; set; } = true;
 
         [JsonProperty("stocks")]
         public List<StockOut> StockOuts { get; set; }
