@@ -75,7 +75,7 @@ namespace BevCapital.Stocks.Application.UseCases.AppUserStocks
                                                         cachedAppUserStocks,
                                                         new DistributedCacheEntryOptions
                                                         {
-                                                            AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1)
+                                                            AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(15)
                                                         }
                                                     );
                 }
