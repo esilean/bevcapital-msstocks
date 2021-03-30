@@ -76,7 +76,7 @@ namespace BevCapital.Stocks.Application.UseCases.AppUserStocks
                                                         new DistributedCacheEntryOptions
                                                         {
                                                             AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(15),
-                                                            AbsoluteExpiration = DateTimeOffset.Now
+                                                            AbsoluteExpiration = DateTimeOffset.Now.AddSeconds(15)
                                                         },
                                                         cancellationToken
                                                     );
