@@ -140,15 +140,41 @@ Resources:
             - name: AWS_XRAY_DAEMON_ADDRESS
               value: !Sub xray-daemon:${XRayContainerPort}
             - name: RDS_ENDPOINT
-              value: "rrp91nlxbmcmuu.cde5ubcwv1jz.sa-east-1.rds.amazonaws.com"
+              value: !ImportValue
+                "Fn::Sub": "RDSBevCapital-Endpoint"
             - name: RDS_PASSWORD
-              value: "o,fT(%uQE'-|4t}t"
+              value:
+                !Join [
+                  "",
+                  [
+                    "{{resolve:secretsmanager:",
+                    "RDSSecretBevCapital",
+                    ":SecretString:password}}",
+                  ],
+                ]
             - name: CACHE_ENDPOINT
-              value: "redis-17626.c256.us-east-1-2.ec2.cloud.redislabs.com:17626"
+              value:
+                !Join [
+                  "",
+                  [
+                    "{{resolve:secretsmanager:",
+                    "RedisSecret-2342ffds2",
+                    ":SecretString:cacheEndpoint}}",
+                  ],
+                ]
             - name: CACHE_PASSWORD
-              value: "bXmNJ3V86CpbcesWt8zo4DVEiQLZyTiA"
+              value:
+                !Join [
+                  "",
+                  [
+                    "{{resolve:secretsmanager:",
+                    "RedisSecret-2342ffds2",
+                    ":SecretString:cachePassword}}",
+                  ],
+                ]
             - name: SQSSettings__QueueURL
-              value: "https://sqs.sa-east-1.amazonaws.com/268919435141/qf-logon-userv2.fifo"
+              value: !ImportValue
+                "Fn::Sub": "AppUserQueueBevCapital"
           LogConfiguration:
             LogDriver: "awslogs"
             Options:
