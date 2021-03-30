@@ -57,7 +57,7 @@ namespace BevCapital.Stocks.Application.UseCases.AppUserStocks
                 }
 
                 var cacheKey = string.Format(CacheKeys.LIST_ALL_APPUSERSTOCKS_USERIDPARAM, appUserId);
-                var cachedAppUserStocks = await _distributedCache.GetAsync<AppUserStockOut>(cacheKey);
+                var cachedAppUserStocks = await _distributedCache.GetAsync<AppUserStockOut>(cacheKey, cancellationToken);
                 if (cachedAppUserStocks == null)
                 {
                     var appUserStocks = await _unitOfWork.AppUserStocks.GetAllStocksFromUser(appUserId);
@@ -75,8 +75,10 @@ namespace BevCapital.Stocks.Application.UseCases.AppUserStocks
                                                         cachedAppUserStocks,
                                                         new DistributedCacheEntryOptions
                                                         {
-                                                            AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(15)
-                                                        }
+                                                            AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(15),
+                                                            AbsoluteExpiration = DateTimeOffset.Now
+                                                        },
+                                                        cancellationToken
                                                     );
                 }
 
