@@ -22,51 +22,33 @@ Parameters:
 
   ServiceImageUrl:
     Type: String
-    Default: ""
     Description: The url of a docker image that contains the application
 
-  ALB:
+  NLB:
     Type: String
-    Default: ""
-    Description: A Load balancer
+    Description: A Network Load balancer
 
-  HttpListener:
-    Type: String
-    Default: ""
-    Description: A Listener of the Load balancer
+  ListenerPort:
+    Type: Number
+    Default: 8081
+    Description: Listener Port
 
   NginxImageUrl:
     Type: String
-    Default: ""
     Description: The url of a docker image that contains the nginx
 
   XRayImageUrl:
     Type: String
-    Default: ""
     Description: The url of a docker image that contains the xray-daemon
 
   ECSServiceAutoScalingRoleARN:
     Type: String
-    Default: ""
     Description: The ECS service auto scaling role ARN
 
   XRayContainerPort:
     Type: Number
     Default: 2000
     Description: What port number the xray-daemon application inside the docker container is binding to
-
-  Path:
-    Type: String
-    Default: "/ms-stocks"
-    Description: A path on the load balancer that this service
-      should be connected to.
-
-  Priority:
-    Type: Number
-    Default: 3
-    Description: The priority for the routing rule added to the load balancer.
-      This only applies if your have multiple services which have been
-      assigned to different paths on the load balancer.
 
   DesiredCount:
     Type: Number
@@ -167,9 +149,9 @@ Resources:
                     ":SecretString:cachePassword}}",
                   ],
                 ]
-            - name: SQSSettings__QueueURL
+            - name: SNSSettings__TopicArn
               value: !ImportValue
-                "Fn::Sub": "AppUserQueueBevCapital"
+                "Fn::Sub": "SNSTopicARNBevCapital"
           LogConfiguration:
             LogDriver: "awslogs"
             Options:
@@ -192,12 +174,8 @@ Resources:
               awslogs-region: !Ref "AWS::Region"
               awslogs-stream-prefix: !Sub ${EnvironmentName}-${ServiceName}-xray
 
-  # The service. The service is a resource which allows you to run multiple
-  # copies of a type of task, and gather up their logs and metrics, as well
-  # as monitor the number of running tasks and replace any that have crashed
   Service:
     Type: AWS::ECS::Service
-    DependsOn: ListenerRule
     Properties:
       ServiceName: !Ref ServiceName
       Cluster: !Ref Cluster
@@ -211,39 +189,32 @@ Resources:
           ContainerPort: 80
           TargetGroupArn: !Ref TargetGroup
 
-  # A target group. This is used for keeping track of all the tasks, and
-  # what IP addresses / port numbers they have. You can query it yourself,
-  # to use the addresses yourself, but most often this target group is just
-  # connected to an application load balancer, or network load balancer, so
-  # it can automatically distribute traffic across all the targets.
   TargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       Name: !Sub ${ServiceName}-nginx
-      Port: 80
-      Protocol: HTTP
       VpcId: !Ref "VPC"
+      Port: !Ref ListenerPort
+      Protocol: TCP
+      TargetType: instance
       HealthCheckIntervalSeconds: 10
-      HealthCheckPath: /ms-stocks/health/live
+      HealthCheckPath: "/ms-stocks/health/live"
       HealthCheckProtocol: HTTP
-      HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
       UnhealthyThresholdCount: 2
+      TargetGroupAttributes:
+      - Key: deregistration_delay.timeout_seconds
+        Value: 60
 
-  # Create a rule on the load balancer for routing traffic to the target group
-  ListenerRule:
-    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+  Listener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
-      Actions:
-        - TargetGroupArn: !Ref TargetGroup
-          Type: "forward"
-      Conditions:
-        - Field: path-pattern
-          Values:
-            - !Ref Path
-            - !Sub ${Path}/*
-      ListenerArn: !Ref HttpListener
-      Priority: !Ref Priority
+      LoadBalancerArn: !Ref NLB
+      Port: !Ref ListenerPort
+      Protocol: TCP
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup
 
   # Enable autoscaling for this service
   ScalableTarget:
