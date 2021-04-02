@@ -149,9 +149,9 @@ Resources:
                     ":SecretString:cachePassword}}",
                   ],
                 ]
-            - name: SNSSettings__TopicArn
+            - name: SQSSettings__QueueURL
               value: !ImportValue
-                "Fn::Sub": "SNSTopicARNBevCapital"
+                "Fn::Sub": "AppUserQueueBevCapital"
           LogConfiguration:
             LogDriver: "awslogs"
             Options:
