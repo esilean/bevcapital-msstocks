@@ -196,7 +196,7 @@ Resources:
       VpcId: !Ref "VPC"
       Port: !Ref ListenerPort
       Protocol: TCP
-      TargetType: ip
+      TargetType: instance
       HealthCheckIntervalSeconds: 10
       HealthCheckPath: "/ms-stocks/health/live"
       HealthCheckProtocol: HTTP
