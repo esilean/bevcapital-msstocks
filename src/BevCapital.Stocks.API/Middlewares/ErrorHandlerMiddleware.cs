@@ -1,4 +1,5 @@
 ﻿using BevCapital.Stocks.Application.Errors;
+using BevCapital.Stocks.Domain.Constants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
@@ -49,7 +50,7 @@ namespace BevCapital.Stocks.API.Middlewares
                     break;
             }
 
-            context.Response.ContentType = "application/json";
+            context.Response.ContentType = Common.APPLICATION_JSON;
             if (errors != null)
             {
                 var result = JsonSerializer.Serialize(new

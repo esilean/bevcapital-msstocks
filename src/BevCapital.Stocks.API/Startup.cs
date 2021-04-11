@@ -3,6 +3,7 @@ using Amazon.XRay.Recorder.Core.Internal.Entities;
 using BevCapital.Stocks.API.Middlewares;
 using BevCapital.Stocks.Background.ServiceExtensions;
 using BevCapital.Stocks.Data.Context;
+using BevCapital.Stocks.Domain.Constants;
 using BevCapital.Stocks.Domain.Entities;
 using BevCapital.Stocks.Infra.ServiceExtensions;
 using HealthChecks.UI.Client;
@@ -99,7 +100,7 @@ namespace BevCapital.Stocks.API
                         environment = env.EnvironmentName
                     });
 
-                    context.Response.ContentType = "application/json";
+                    context.Response.ContentType = Common.APPLICATION_JSON;
                     await context.Response.WriteAsync(result.ToString());
                 });
             });

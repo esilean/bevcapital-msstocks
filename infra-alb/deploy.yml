@@ -22,32 +22,22 @@ Parameters:
 
   ServiceImageUrl:
     Type: String
-    Default: ""
     Description: The url of a docker image that contains the application
-
-  ALB:
-    Type: String
-    Default: ""
-    Description: A Load balancer
 
   HttpListener:
     Type: String
-    Default: ""
-    Description: A Listener of the Load balancer
+    Description: A Listener of the Application Load balancer
 
   NginxImageUrl:
     Type: String
-    Default: ""
     Description: The url of a docker image that contains the nginx
 
   XRayImageUrl:
     Type: String
-    Default: ""
     Description: The url of a docker image that contains the xray-daemon
 
   ECSServiceAutoScalingRoleARN:
     Type: String
-    Default: ""
     Description: The ECS service auto scaling role ARN
 
   XRayContainerPort:
@@ -81,7 +71,7 @@ Parameters:
       access other AWS resources like S3 buckets, DynamoDB tables, etc
 
 Conditions:
-  HasCustomRole: !Not [!Equals [!Ref "Role", ""]]
+  HasCustomRole: !Not [!Equals [!Ref Role, ""]]
 
 Resources:
   # A log group for storing the stdout logs from this service's containers
@@ -95,37 +85,37 @@ Resources:
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
-      Family: !Ref "ServiceName"
+      Family: !Ref ServiceName
       NetworkMode: bridge
       Cpu: 512
       Memory: 512
       TaskRoleArn:
         Fn::If:
           - "HasCustomRole"
-          - !Ref "Role"
-          - !Ref "AWS::NoValue"
+          - !Ref Role
+          - !Ref AWS::NoValue
       ContainerDefinitions:
         - Name: !Sub ${ServiceName}-nginx
           Cpu: 128
           Memory: 128
           Essential: true
-          Image: !Ref "NginxImageUrl"
+          Image: !Ref NginxImageUrl
           PortMappings:
             - ContainerPort: 80
               HostPort: 0
               Protocol: TCP
           Links:
-            - !Ref "ServiceName"
+            - !Ref ServiceName
           LogConfiguration:
             LogDriver: "awslogs"
             Options:
               awslogs-group: !Sub ${EnvironmentName}-service-${ServiceName}
-              awslogs-region: !Ref "AWS::Region"
+              awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: !Sub ${EnvironmentName}-${ServiceName}-nginx
-        - Name: !Ref "ServiceName"
+        - Name: !Ref ServiceName
           Cpu: 128
           Memory: 128
-          Image: !Ref "ServiceImageUrl"
+          Image: !Ref ServiceImageUrl
           PortMappings:
             - ContainerPort: 80
               HostPort: 0
@@ -136,7 +126,7 @@ Resources:
               value: !Sub xray-daemon:${XRayContainerPort}
             - name: RDS_ENDPOINT
               value: !ImportValue
-                "Fn::Sub": "RDSBevCapital-Endpoint"
+                "Fn::Sub": "DBInstance-Endpoint"
             - name: RDS_PASSWORD
               value:
                 !Join [
@@ -169,18 +159,18 @@ Resources:
                 ]
             - name: SQSSettings__QueueURL
               value: !ImportValue
-                "Fn::Sub": "AppUserQueueBevCapital"
+                "Fn::Sub": "AppQueueURL"
           LogConfiguration:
             LogDriver: "awslogs"
             Options:
               awslogs-group: !Sub ${EnvironmentName}-service-${ServiceName}
-              awslogs-region: !Ref "AWS::Region"
+              awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: !Sub ${EnvironmentName}-${ServiceName}
         - Name: xray-daemon
           Cpu: 128
           Memory: 128
           Essential: false
-          Image: !Ref "XRayImageUrl"
+          Image: !Ref XRayImageUrl
           PortMappings:
             - ContainerPort: !Ref XRayContainerPort
               HostPort: 0
@@ -189,7 +179,7 @@ Resources:
             LogDriver: "awslogs"
             Options:
               awslogs-group: !Sub ${EnvironmentName}-service-${ServiceName}
-              awslogs-region: !Ref "AWS::Region"
+              awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: !Sub ${EnvironmentName}-${ServiceName}-xray
 
   # The service. The service is a resource which allows you to run multiple
@@ -204,8 +194,8 @@ Resources:
       DeploymentConfiguration:
         MaximumPercent: 200
         MinimumHealthyPercent: 75
-      DesiredCount: !Ref "DesiredCount"
-      TaskDefinition: !Ref "TaskDefinition"
+      DesiredCount: !Ref DesiredCount"
+      TaskDefinition: !Ref TaskDefinition
       LoadBalancers:
         - ContainerName: !Sub ${ServiceName}-nginx
           ContainerPort: 80
@@ -222,7 +212,7 @@ Resources:
       Name: !Sub ${ServiceName}-nginx
       Port: 80
       Protocol: HTTP
-      VpcId: !Ref "VPC"
+      VpcId: !Ref VPC
       HealthCheckIntervalSeconds: 10
       HealthCheckPath: /ms-stocks/health/live
       HealthCheckProtocol: HTTP
@@ -256,11 +246,11 @@ Resources:
         Fn::Join:
           - "/"
           - - service
-            - !Ref "Cluster"
-            - !Ref "ServiceName"
+            - !Ref Cluster
+            - !Ref ServiceName
       MinCapacity: 1
       MaxCapacity: 5
-      RoleARN: !Ref "ECSServiceAutoScalingRoleARN"
+      RoleARN: !Ref ECSServiceAutoScalingRoleARN
 
   # Create scaling policies for the service
   ScaleDownPolicy:
@@ -271,16 +261,16 @@ Resources:
         Fn::Join:
           - "/"
           - - scale
-            - !Ref "EnvironmentName"
-            - !Ref "ServiceName"
+            - !Ref EnvironmentName
+            - !Ref ServiceName
             - down
       PolicyType: StepScaling
       ResourceId:
         Fn::Join:
           - "/"
           - - service
-            - !Ref "Cluster"
-            - !Ref "ServiceName"
+            - !Ref Cluster
+            - !Ref ServiceName
       ScalableDimension: "ecs:service:DesiredCount"
       ServiceNamespace: "ecs"
       StepScalingPolicyConfiguration:
@@ -299,16 +289,16 @@ Resources:
         Fn::Join:
           - "/"
           - - scale
-            - !Ref "EnvironmentName"
-            - !Ref "ServiceName"
+            - !Ref EnvironmentName
+            - !Ref ServiceName
             - up
       PolicyType: StepScaling
       ResourceId:
         Fn::Join:
           - "/"
           - - service
-            - !Ref "Cluster"
-            - !Ref "ServiceName"
+            - !Ref Cluster
+            - !Ref ServiceName
       ScalableDimension: "ecs:service:DesiredCount"
       ServiceNamespace: "ecs"
       StepScalingPolicyConfiguration:
@@ -333,22 +323,22 @@ Resources:
         Fn::Join:
           - "-"
           - - low-cpu
-            - !Ref "EnvironmentName"
-            - !Ref "ServiceName"
+            - !Ref EnvironmentName
+            - !Ref ServiceName
       AlarmDescription:
         Fn::Join:
           - " "
           - - "Low CPU utilization for service"
-            - !Ref "ServiceName"
+            - !Ref ServiceName
             - "in environment"
-            - !Ref "EnvironmentName"
+            - !Ref EnvironmentName
       MetricName: CPUUtilization
       Namespace: AWS/ECS
       Dimensions:
         - Name: ServiceName
-          Value: !Ref "ServiceName"
+          Value: !Ref ServiceName
         - Name: ClusterName
-          Value: !Ref "Cluster"
+          Value: !Ref Cluster
       Statistic: Average
       Period: 60
       EvaluationPeriods: 1
@@ -364,22 +354,22 @@ Resources:
         Fn::Join:
           - "-"
           - - high-cpu
-            - !Ref "EnvironmentName"
-            - !Ref "ServiceName"
+            - !Ref EnvironmentName
+            - !Ref ServiceName
       AlarmDescription:
         Fn::Join:
           - " "
           - - "High CPU utilization for service"
-            - !Ref "ServiceName"
+            - !Ref ServiceName
             - "in environment"
-            - !Ref "EnvironmentName"
+            - !Ref EnvironmentName
       MetricName: CPUUtilization
       Namespace: AWS/ECS
       Dimensions:
         - Name: ServiceName
-          Value: !Ref "ServiceName"
+          Value: !Ref ServiceName
         - Name: ClusterName
-          Value: !Ref "Cluster"
+          Value: !Ref Cluster
       Statistic: Average
       Period: 60
       EvaluationPeriods: 1
